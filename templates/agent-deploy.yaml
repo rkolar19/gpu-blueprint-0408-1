@@ -16,7 +16,7 @@ spec:
       containers:
         - name: agent
           image: {{ .Values.agent.image }}
-          # Simulating an agent polling the vLLM "Brain"
+          # Simulating an agent polling the vLLM "Brain" 
           command: ["/bin/sh", "-c"]
           args:
             - |
