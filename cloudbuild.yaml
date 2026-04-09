@@ -1,0 +1,42 @@
+steps:
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    # 1. Install Helm
+    echo "Installing Helm..."
+    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    chmod 700 get_helm.sh
+    ./get_helm.sh
+    
+    # 2. Authenticate to the Cluster
+    echo "Authenticating to GKE cluster..."
+    gcloud container clusters get-credentials ${_CLUSTER_NAME} --region ${_CLUSTER_REGION} --project $PROJECT_ID
+    
+    # 3. Deploy logic based on branch Trigger
+    if [ "$BRANCH_NAME" == "dev" ]; then
+      echo "Deploying to DEV namespace..."
+      helm upgrade --install gpu-blueprint . \
+        --namespace dev --create-namespace \
+        -f values-dev.yaml
+    
+    elif [ "$BRANCH_NAME" == "staging" ]; then
+      echo "Deploying to STAGE namespace..."
+      helm upgrade --install gpu-blueprint . \
+        --namespace stage --create-namespace \
+        -f values-stage.yaml
+    
+    elif [ "$BRANCH_NAME" == "main" ]; then
+      echo "Deploying to PROD namespace..."
+      helm upgrade --install gpu-blueprint . \
+        --namespace prod --create-namespace \
+        -f values-prod.yaml
+        
+    else
+      echo "No deployment defined for branch: $BRANCH_NAME. Skipping."
+    fi
+
+substitutions:
+  _CLUSTER_NAME: 'gpu-gke-1'
+  _CLUSTER_REGION: 'us-central1'

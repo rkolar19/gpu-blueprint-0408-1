@@ -1,0 +1,3 @@
+agent:
+  replicaCount: 5
+  logLevel: "WARN"

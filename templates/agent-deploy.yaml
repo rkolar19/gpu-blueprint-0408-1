@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-agents
+spec:
+  replicas: {{ .Values.agent.replicaCount }}
+  selector:
+    matchLabels:
+      app: agent
+  template:
+    metadata:
+      labels:
+        app: agent
+        fence-role: cognitive-agent
+    spec:
+      containers:
+        - name: agent
+          image: {{ .Values.agent.image }}
+          # Simulating an agent polling the vLLM "Brain"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              while true; do
+                echo "Agent $(hostname) calling vLLM brain..."
+                wget -qO- http://{{ .Release.Name }}-vllm:80
+                sleep 10;
+              done

@@ -1,0 +1,23 @@
+# Default values for gpu-blueprint-0408-1.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+# GPU Partitioning Strategy (MIG Emulation)
+gpuConfig:
+  model: "Llama-3-70B-INT4"
+  vramReserved: "40GB"
+
+vllm:
+  image: hashicorp/http-echo # Mocking vLLM with a lightweight echo server
+  replicaCount: 1
+  port: 8000
+
+agent:
+  image: alpine
+  replicaCount: 5 # Your 5-agent team
+  logLevel: "DEBUG"
+
+# values.yaml update
+realvllm:
+  image: vllm/vllm-openai:latest
+  model: "meta-llama/Meta-Llama-3-70B-Instruct"
+  gpuLimit: 1 # Requests 1 GPU (or a MIG slice)

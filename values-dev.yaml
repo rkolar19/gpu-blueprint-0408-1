@@ -1,0 +1,3 @@
+agent:
+  replicaCount: 1
+  logLevel: "DEBUG"
