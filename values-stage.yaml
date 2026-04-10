@@ -1,7 +1,7 @@
 agents:
   agent1:
-    replicaCount: 3
+    replicaCount: 1
     logLevel: "INFO"
   agent2:
-    replicaCount: 3
+    replicaCount: 1
     logLevel: "INFO"
