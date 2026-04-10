@@ -1,27 +1,42 @@
+{{- range $name, $agent := .Values.agents }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-agents
+  name: {{ $.Release.Name }}-{{ $name }}
 spec:
-  replicas: {{ .Values.agent.replicaCount }}
+  replicas: {{ $agent.replicaCount }}
   selector:
     matchLabels:
-      app: agent
+      app: {{ $name }}
   template:
     metadata:
       labels:
-        app: agent
+        app: {{ $name }}
         fence-role: cognitive-agent
     spec:
       containers:
-        - name: agent
-          image: {{ .Values.agent.image }}
-          # Simulating an agent polling the vLLM "Brain"
-          command: ["/bin/sh", "-c"]
+        - name: {{ $name }}
+          image: {{ $agent.image }}
+          command:
+{{- if $agent.command }}
+{{ toYaml $agent.command | indent 12 }}
+{{- else }}
+            - "/bin/sh"
+            - "-c"
+{{- end }}
           args:
+{{- if $agent.args }}
+          {{- range $arg := $agent.args }}
+            - |
+{{ tpl $arg $ | indent 14 }}
+          {{- end }}
+{{- else }}
             - |
               while true; do
                 echo "Agent $(hostname) calling vLLM brain..."
-                wget -qO- http://{{ .Release.Name }}-vllm:80
+                wget -qO- http://{{ $.Release.Name }}-vllm:80
                 sleep 10;
               done
+{{- end }}
+{{- end }}

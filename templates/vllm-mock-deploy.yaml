@@ -19,5 +19,10 @@ spec:
     spec:
       containers:
         - name: vllm-mock
-          image: "busybox:latest"
-          command: ["sleep", "3600"]
+          image: {{ .Values.vllm.image }}
+          args:
+            - "-text=hello from vllm mock"
+            - "-listen=:{{ .Values.vllm.port }}"
+          ports:
+            - name: http
+              containerPort: {{ .Values.vllm.port }}

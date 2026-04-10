@@ -11,11 +11,22 @@ vllm:
   replicaCount: 1
   port: 8000
 
-agent:
-  image: alpine
-  replicaCount: 5 # Your 5-agent team
-  logLevel: "DEBUG"
-
+agents:
+  agent1:
+    image: alpine
+    replicaCount: 2
+    logLevel: "DEBUG"
+  agent2:
+    image: busybox
+    replicaCount: 3
+    logLevel: "INFO"
+    args:
+      - |
+        while true; do
+          echo "Agent2 (Busybox custom!) pinging the brain..."
+          wget -qO- http://{{ $.Release.Name }}-vllm:80
+          sleep 10;
+        done
 # values.yaml update
 realvllm:
   image: vllm/vllm-openai:latest
