@@ -1,3 +1,7 @@
-agent:
-  replicaCount: 5
-  logLevel: "WARN"
+agents:
+  agent1:
+    replicaCount: 5
+    logLevel: "WARN"
+  agent2:
+    replicaCount: 5
+    logLevel: "WARN"
