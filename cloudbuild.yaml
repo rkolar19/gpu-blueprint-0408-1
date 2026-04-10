@@ -40,3 +40,6 @@ steps:
 substitutions:
   _CLUSTER_NAME: 'gpu-gke-1'
   _CLUSTER_REGION: 'us-central1'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
